@@ -9,7 +9,7 @@ import (
 
 var timeEntry1 = TimeEntry{
 	Week:     1,
-	Date:     "2018-01-1",
+	Date:     "2018-01-01",
 	Issue:    "AA-1234",
 	Summary:  "Summary of the issue",
 	Employee: "maxx",
@@ -19,7 +19,7 @@ var timeEntry1 = TimeEntry{
 
 var timeEntry2 = TimeEntry{
 	Week:     1,
-	Date:     "2018-01-1",
+	Date:     "2018-01-01",
 	Issue:    "AA-1235",
 	Summary:  "Summary of the issue",
 	Employee: "maxx",
@@ -29,7 +29,7 @@ var timeEntry2 = TimeEntry{
 
 var timeEntry3 = TimeEntry{
 	Week:     2,
-	Date:     "2018-01-8",
+	Date:     "2018-01-08",
 	Issue:    "AA-1235",
 	Summary:  "Summary of the issue",
 	Employee: "maxx",
