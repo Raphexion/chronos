@@ -1,0 +1,2 @@
+Chronos - JIRA time tracker
+===========================
