@@ -37,6 +37,16 @@ var timeEntry3 = TimeEntry{
 	Comment:  "My Comment",
 }
 
+var timeEntry4 = TimeEntry{
+	Week:     2,
+	Date:     "2018-01-09",
+	Issue:    "AA-1235",
+	Summary:  "Summary of the issue",
+	Employee: "maxx",
+	Hours:    4.0,
+	Comment:  "My Comment",
+}
+
 func TestCommandBuilderEmpty(t *testing.T) {
 	commands := BuildCommands([]TimeEntry{})
 	amount := len(commands)
@@ -143,6 +153,15 @@ func TestPrettyPrintTwoDifferentEntries(t *testing.T) {
 func TestPrettyPrintTwoDifferentWeeksEntries(t *testing.T) {
 	commands := BuildCommands([]TimeEntry{timeEntry1, timeEntry2, timeEntry3})
 	output, expected := helpPrettyPrint(commands, "timeEntry123.txt")
+
+	if output != expected {
+		fmt.Printf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
+	}
+}
+
+func TestPrettyPrint1234(t *testing.T) {
+	commands := BuildCommands([]TimeEntry{timeEntry1, timeEntry2, timeEntry3, timeEntry4})
+	output, expected := helpPrettyPrint(commands, "timeEntry1234.txt")
 
 	if output != expected {
 		fmt.Printf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
