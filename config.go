@@ -8,6 +8,17 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var (
+	// DefaultURL is the default URL
+	DefaultURL = "https://myJira.atlassian.net"
+	// DefaultMail is the default mail
+	DefaultMail = "myLogin@example.com"
+	// DefaultAPIKey is the default API key
+	DefaultAPIKey = "1234ABCD"
+	// DefaultUsername is the default username
+	DefaultUsername = "myUserName"
+)
+
 // Jira represent all configuration for Jira
 type Jira struct {
 	URL      string `yaml:"url"`
@@ -54,10 +65,10 @@ func CommandlineConfig(url, mail, username, apikey string) (c ChronosConfig) {
 func GenerateExampleConfig() error {
 	config := ChronosConfig{
 		Jira: Jira{
-			URL:      "https://myJira.atlassian.net",
-			Mail:     "myLogin@example.com",
-			APIKey:   "1234ABCD",
-			Username: "myUserName",
+			URL:      DefaultURL,
+			Mail:     DefaultMail,
+			APIKey:   DefaultAPIKey,
+			Username: DefaultUsername,
 		},
 	}
 
