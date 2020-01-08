@@ -17,14 +17,17 @@ var (
 	DefaultAPIKey = "1234ABCD"
 	// DefaultUsername is the default username
 	DefaultUsername = "myUserName"
+	// DefaultWeeksLookback number of weeks to look back
+	DefaultWeeksLookback = 3
 )
 
 // Jira represent all configuration for Jira
 type Jira struct {
-	URL      string `yaml:"url"`
-	Mail     string `yaml:"mail"`
-	APIKey   string `yaml:"apikey"`
-	Username string `yaml:"username"`
+	URL           string `yaml:"url"`
+	Mail          string `yaml:"mail"`
+	APIKey        string `yaml:"apikey"`
+	Username      string `yaml:"username"`
+	WeeksLookback int    `yaml:"weekslookback"`
 }
 
 // A ChronosConfig represents all the information we need to
@@ -61,17 +64,23 @@ func CommandlineConfig(url, mail, username, apikey string) (c ChronosConfig) {
 	return
 }
 
-// GenerateExampleConfig will write an example configuration to file
-func GenerateExampleConfig() error {
-	config := ChronosConfig{
+// DefaultConfig returns the default config
+func DefaultConfig() (config ChronosConfig) {
+	config = ChronosConfig{
 		Jira: Jira{
-			URL:      DefaultURL,
-			Mail:     DefaultMail,
-			APIKey:   DefaultAPIKey,
-			Username: DefaultUsername,
+			URL:           DefaultURL,
+			Mail:          DefaultMail,
+			APIKey:        DefaultAPIKey,
+			Username:      DefaultUsername,
+			WeeksLookback: DefaultWeeksLookback,
 		},
 	}
+	return
+}
 
+// GenerateExampleConfig will write an example configuration to file
+func GenerateExampleConfig() error {
+	config := DefaultConfig()
 	data, err := yaml.Marshal(&config)
 
 	usr, err := user.Current()
