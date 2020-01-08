@@ -58,7 +58,7 @@ func ExtractTimeEntriesFromJira(client *jira.Client, config ChronosConfig) ([]Ti
 		Fields:     []string{"key", "summary", "worklog"},
 	}
 
-	pastDate := time.Now().AddDate(0, -3, 0).Format("2006-01-02")
+	pastDate := CalcPassedDate(config).Format("2006-01-02")
 	searchString := fmt.Sprintf("worklogDate >= %s && worklogAuthor = %s", pastDate, config.Jira.Username)
 	issues, _, err := client.Issue.Search(searchString, searchOpts)
 	if err != nil {
@@ -72,4 +72,19 @@ func ExtractTimeEntriesFromJira(client *jira.Client, config ChronosConfig) ([]Ti
 	})
 
 	return employeeTimeEntries, nil
+}
+
+// CalcPassedDate calculates the date in the passed
+func CalcPassedDate(config ChronosConfig) time.Time {
+	return CalcPassedDateFrom(time.Now(), config)
+}
+
+// CalcPassedDateFrom calucates the date in the passed from given date
+func CalcPassedDateFrom(from time.Time, config ChronosConfig) time.Time {
+	weekday := int(from.Weekday()) - 1
+	days := config.WeeksLookback*7 + weekday
+
+	ret := from.AddDate(0, 0, -days)
+
+	return ret
 }
