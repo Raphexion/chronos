@@ -26,6 +26,7 @@ deploy:
   file:
     - $TRAVIS_BUILD_DIR/chronos
     - $TRAVIS_BUILD_DIR/chronos.exe
+  skip_cleanup: true
   on:
     tags: true
     condition: $TRAVIS_GO_VERSION =~ ^1\.13
