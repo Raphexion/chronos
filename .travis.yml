@@ -1,4 +1,3 @@
-# use the latest ubuntu environment (18.04) available on travis
 dist: bionic
 
 language: go
@@ -15,6 +14,8 @@ before_install:
 
 script:
   - go test -race -coverprofile=coverage.txt -covermode=atomic
+  - go build
+  - GOOS=windows GOARCH=amd64 go build
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
