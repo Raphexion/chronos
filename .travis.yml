@@ -24,8 +24,8 @@ deploy:
   provider: releases
   token: $GITHUB_TOKEN
   file:
-    - "chronos"
-    - "chronos.exe"
+    - $TRAVIS_BUILD_DIR/chronos
+    - $TRAVIS_BUILD_DIR/chronos.exe
   on:
     tags: true
     condition: $TRAVIS_GO_VERSION =~ ^1\.13
