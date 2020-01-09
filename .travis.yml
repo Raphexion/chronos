@@ -19,3 +19,13 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+deploy:
+  provider: releases
+  token: $GITHUB_TOKEN
+  file:
+    - chronos
+    - chronos.exe
+  cleanup: false
+  on:
+    tags: true
