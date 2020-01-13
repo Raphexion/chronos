@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/andygrunwald/go-jira"
@@ -59,9 +60,11 @@ func ExtractTimeEntriesFromJira(client *jira.Client, config ChronosConfig) ([]Ti
 	}
 
 	pastDate := CalcPassedDate(config).Format("2006-01-02")
+	log.Printf("[collector] Query from %s", pastDate)
 	searchString := fmt.Sprintf("worklogDate >= %s && worklogAuthor = %s", pastDate, config.Jira.Username)
 	issues, _, err := client.Issue.Search(searchString, searchOpts)
 	if err != nil {
+		log.Fatalf("[collector] Search failed %s", err)
 		return []TimeEntry{}, err
 	}
 
