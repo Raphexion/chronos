@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"os/user"
 	"path/filepath"
 
@@ -38,10 +39,18 @@ type ChronosConfig struct {
 
 // ReadConfig reads a YAML configuration from the home folder
 func ReadConfig() (ChronosConfig, error) {
-	var config ChronosConfig
-
 	usr, err := user.Current()
+	if err != nil {
+		log.Fatal("[config] Unable to get current user")
+		return ChronosConfig{}, err
+	}
 	configFile := filepath.Join(usr.HomeDir, "chronos.yaml")
+	return ReadConfigFile(configFile)
+}
+
+// ReadConfigFile reads a YAML configuration from a file
+func ReadConfigFile(configFile string) (ChronosConfig, error) {
+	var config ChronosConfig
 	raw, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		return config, err
@@ -78,13 +87,21 @@ func DefaultConfig() (config ChronosConfig) {
 	return
 }
 
+// GenerateExampleConfigInHome will write an example configuration in home
+func GenerateExampleConfigInHome() error {
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal("[config] Unable to get current user")
+	}
+	configFile := filepath.Join(usr.HomeDir, "chronos.yaml")
+	return GenerateExampleConfig(configFile)
+}
+
 // GenerateExampleConfig will write an example configuration to file
-func GenerateExampleConfig() error {
+func GenerateExampleConfig(configFile string) error {
 	config := DefaultConfig()
 	data, err := yaml.Marshal(&config)
 
-	usr, err := user.Current()
-	configFile := filepath.Join(usr.HomeDir, "chronos.yaml")
 	err = ioutil.WriteFile(configFile, data, 0600)
 	if err != nil {
 		return err

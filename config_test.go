@@ -1,12 +1,16 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 )
 
 func TestGenerateAndReadBack(t *testing.T) {
-	GenerateExampleConfig()
-	config, err := ReadConfig()
+	configFile := filepath.Join(os.TempDir(), "chronos.yaml")
+
+	GenerateExampleConfig(configFile)
+	config, err := ReadConfigFile(configFile)
 
 	if err != nil {
 		t.Errorf("Unable to read config file %s", err)

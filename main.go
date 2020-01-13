@@ -19,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	if *generateConfig {
-		GenerateExampleConfig()
+		GenerateExampleConfigInHome()
 		return
 	}
 
