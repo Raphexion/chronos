@@ -61,6 +61,10 @@ func ReadConfigFile(configFile string) (ChronosConfig, error) {
 		return config, err
 	}
 
+	if config.WeeksLookback <= 0 {
+		config.WeeksLookback = DefaultWeeksLookback
+	}
+
 	return config, nil
 }
 
