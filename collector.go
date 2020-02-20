@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/andygrunwald/go-jira"
@@ -10,13 +11,14 @@ import (
 
 // A TimeEntry represent a worklog that was entered in JIRA
 type TimeEntry struct {
-	Issue    string
-	Summary  string
-	Employee string
-	Date     string
-	Hours    float32
-	Comment  string
-	Week     int
+	Issue        string
+	Summary      string
+	Employee     string
+	EmailAddress string
+	Date         string
+	Hours        float32
+	Comment      string
+	Week         int
 }
 
 type timeEntryPredicate func(TimeEntry) bool
@@ -25,6 +27,7 @@ func issueAndWorklogToTimeEntry(issue jira.Issue, worklog jira.WorklogRecord) (e
 	entry.Issue = issue.Key
 	entry.Summary = issue.Fields.Summary
 	entry.Employee = worklog.Author.Name
+	entry.EmailAddress = worklog.Author.EmailAddress
 	entry.Date = time.Time(*worklog.Created).Format("2006-01-02")
 	entry.Hours = float32(worklog.TimeSpentSeconds) / 3600
 	entry.Comment = worklog.Comment
@@ -39,6 +42,7 @@ func extractTimeEntriesFromIssues(issues []jira.Issue) (timeEntries []TimeEntry)
 			timeEntries = append(timeEntries, issueAndWorklogToTimeEntry(issue, worklog))
 		}
 	}
+	log.Printf("Extracted %d time entries from %d issues", len(timeEntries), len(issues))
 	return
 }
 
@@ -56,11 +60,12 @@ func ExtractTimeEntriesFromJira(client *jira.Client, config ChronosConfig) ([]Ti
 	searchOpts := &jira.SearchOptions{
 		StartAt:    0,
 		MaxResults: 1000,
+		Expand:     "worklog",
 		Fields:     []string{"key", "summary", "worklog"},
 	}
 
 	pastDate := CalcPassedDate(config).Format("2006-01-02")
-	log.Printf("[collector] Query from %s", pastDate)
+	log.Printf("[collector] Query from %s for user %s", pastDate, config.Jira.Username)
 	searchString := fmt.Sprintf("worklogDate >= %s && worklogAuthor = %s", pastDate, config.Jira.Username)
 	issues, _, err := client.Issue.Search(searchString, searchOpts)
 	if err != nil {
@@ -68,10 +73,12 @@ func ExtractTimeEntriesFromJira(client *jira.Client, config ChronosConfig) ([]Ti
 		return []TimeEntry{}, err
 	}
 
+	log.Printf("JIRA returned %d items", len(issues))
+
 	timeEntries := extractTimeEntriesFromIssues(issues)
 
 	employeeTimeEntries := filterTimeEntries(timeEntries, func(worklog TimeEntry) bool {
-		return worklog.Employee == config.Jira.Username
+		return worklog.Employee == config.Jira.Username || strings.HasPrefix(worklog.EmailAddress, config.Jira.Username)
 	})
 
 	return employeeTimeEntries, nil
