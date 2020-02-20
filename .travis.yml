@@ -30,3 +30,8 @@ deploy:
   on:
     tags: true
     condition: $TRAVIS_GO_VERSION =~ ^1\.13
+
+cache:
+  directories:
+    - $HOME/.cache/go-build
+    - $HOME/gopath/pkg/mod
