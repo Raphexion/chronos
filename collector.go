@@ -81,7 +81,11 @@ func ExtractTimeEntriesFromJira(client *jira.Client, config ChronosConfig) ([]Ti
 		return worklog.Employee == config.Jira.Username || strings.HasPrefix(worklog.EmailAddress, config.Jira.Username)
 	})
 
-	return employeeTimeEntries, nil
+	recentTimeEntries := filterTimeEntries(employeeTimeEntries, func(worklog TimeEntry) bool {
+		return worklog.Date > pastDate
+	})
+
+	return recentTimeEntries, nil
 }
 
 // CalcPassedDate calculates the date in the passed
