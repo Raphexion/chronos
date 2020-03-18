@@ -1,17 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 	"testing"
 )
+
+var issueA = "AA-1234"
+var issueB = "AA-1235"
+var summaryA = "Summary of issue A"
+var summaryB = "Summary of issue B"
 
 var timeEntry1 = TimeEntry{
 	Week:     1,
 	Date:     "2018-01-01",
-	Issue:    "AA-1234",
-	Summary:  "Summary of the issue",
+	Issue:    issueA,
+	Summary:  summaryA,
 	Employee: "maxx",
 	Hours:    1.0,
 	Comment:  "My Comment",
@@ -20,8 +25,8 @@ var timeEntry1 = TimeEntry{
 var timeEntry2 = TimeEntry{
 	Week:     1,
 	Date:     "2018-01-01",
-	Issue:    "AA-1235",
-	Summary:  "Summary of the issue",
+	Issue:    issueB,
+	Summary:  summaryB,
 	Employee: "maxx",
 	Hours:    2.0,
 	Comment:  "My Comment",
@@ -30,8 +35,8 @@ var timeEntry2 = TimeEntry{
 var timeEntry3 = TimeEntry{
 	Week:     2,
 	Date:     "2018-01-08",
-	Issue:    "AA-1235",
-	Summary:  "Summary of the issue",
+	Issue:    issueB,
+	Summary:  summaryB,
 	Employee: "maxx",
 	Hours:    3.0,
 	Comment:  "My Comment",
@@ -40,8 +45,8 @@ var timeEntry3 = TimeEntry{
 var timeEntry4 = TimeEntry{
 	Week:     2,
 	Date:     "2018-01-09",
-	Issue:    "AA-1235",
-	Summary:  "Summary of the issue",
+	Issue:    issueB,
+	Summary:  summaryB,
 	Employee: "maxx",
 	Hours:    4.0,
 	Comment:  "My Comment",
@@ -119,6 +124,10 @@ func helpPrettyPrint(commands []Command, goldenFilename string) (output, expecte
 	output = outputBuffer.String()
 	expected = string(expectedBytes)
 
+	// Editors like to remove trailing newlines
+	output = strings.TrimRight(output, "\n")
+	expected = strings.TrimRight(expected, "\n")
+
 	return
 }
 
@@ -127,7 +136,7 @@ func TestPrettyPrintOneEntry(t *testing.T) {
 	output, expected := helpPrettyPrint(commands, "timeEntry1.txt")
 
 	if output != expected {
-		fmt.Printf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
+		t.Errorf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
 	}
 }
 
@@ -136,9 +145,8 @@ func TestPrettyPrintTwoEntries(t *testing.T) {
 	output, expected := helpPrettyPrint(commands, "timeEntry11.txt")
 
 	if output != expected {
-		fmt.Printf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
+		t.Errorf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
 	}
-
 }
 
 func TestPrettyPrintTwoDifferentEntries(t *testing.T) {
@@ -146,7 +154,7 @@ func TestPrettyPrintTwoDifferentEntries(t *testing.T) {
 	output, expected := helpPrettyPrint(commands, "timeEntry12.txt")
 
 	if output != expected {
-		fmt.Printf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
+		t.Errorf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
 	}
 }
 
@@ -155,7 +163,7 @@ func TestPrettyPrintTwoDifferentWeeksEntries(t *testing.T) {
 	output, expected := helpPrettyPrint(commands, "timeEntry123.txt")
 
 	if output != expected {
-		fmt.Printf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
+		t.Errorf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
 	}
 }
 
@@ -164,6 +172,6 @@ func TestPrettyPrint1234(t *testing.T) {
 	output, expected := helpPrettyPrint(commands, "timeEntry1234.txt")
 
 	if output != expected {
-		fmt.Printf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
+		t.Errorf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
 	}
 }
