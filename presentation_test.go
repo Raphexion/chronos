@@ -75,9 +75,13 @@ func TestCommandBuilderWithOneEntry(t *testing.T) {
 	// 8. Clear date
 	// 9. Summary week
 	// 10. Clear week
+	// 11. Summary of issue
 
-	if amount != 10 {
-		t.Errorf("Returned wrong number of commands, got: %d, want: %d.", amount, 10)
+	expected := 11
+
+	if amount != expected {
+		t.Errorf("Returned wrong number of commands, got: %d, want: %d.", amount, expected)
+		t.Errorf("Commands %+v", commands)
 	}
 
 	var total float32 = 0.0
@@ -110,9 +114,13 @@ func TestCommandBuilderWithTwoEntries(t *testing.T) {
 	// 10. Clear date
 	// 11. Summary week
 	// 12. Clear week
+	// 13. Summary of issue
 
-	if amount != 12 {
-		t.Errorf("Returned wrong number of commands, got: %d, want: %d.", amount, 12)
+	expected := 13
+
+	if amount != expected {
+		t.Errorf("Returned wrong number of commands, got: %d, want: %d.", amount, expected)
+		t.Errorf("Commands %+v", commands)
 	}
 }
 
@@ -173,5 +181,58 @@ func TestPrettyPrint1234(t *testing.T) {
 
 	if output != expected {
 		t.Errorf("Wrong output, got:\n%s\nexprected:\n%s\n", output, expected)
+	}
+}
+
+func TestExtractIssueSummariesOneEntry(t *testing.T) {
+	timeEntries := []TimeEntry{timeEntry1}
+	issues, summaries := ExtractIssueSummaries(timeEntries)
+
+	if len(issues) != 1 {
+		t.Errorf("Wrong amout of issues in summary, got:\n%d\nexprected:\n%d\n", len(issues), 1)
+	}
+
+	summary := summaries[issues[0]]
+	expected := summaryA
+	if summary != expected {
+		t.Errorf("Wrong summary, got: %s, exprected: %s\n", summary, expected)
+	}
+}
+
+func TestExtractIssueSummariesDoubleIssue(t *testing.T) {
+	timeEntries := []TimeEntry{timeEntry1, timeEntry1}
+	issues, summaries := ExtractIssueSummaries(timeEntries)
+
+	if len(issues) != 1 {
+		t.Errorf("Wrong amout of issues in summary, got: %d, exprected: %d\n", len(issues), 1)
+		t.Errorf("%+v", issues)
+	}
+
+	summary := summaries[issues[0]]
+	expected := summaryA
+	if summary != expected {
+		t.Errorf("Wrong summary, got: %s, exprected: %s\n", summary, expected)
+	}
+}
+
+func TestExtractIssueSummariesTwoIssues(t *testing.T) {
+	timeEntries := []TimeEntry{timeEntry1, timeEntry2}
+	issues, summaries := ExtractIssueSummaries(timeEntries)
+
+	if len(issues) != 2 {
+		t.Errorf("Wrong amout of issues in summary, got: %d, exprected: %d\n", len(issues), 2)
+		t.Errorf("%+v", issues)
+	}
+
+	summaryA := summaries[issues[0]]
+	expectedA := summaryA
+	if summaryA != expectedA {
+		t.Errorf("Wrong summary, got: %s, exprected: %s\n", summaryA, expectedA)
+	}
+
+	summaryB := summaries[issues[1]]
+	expectedB := summaryB
+	if summaryB != expectedB {
+		t.Errorf("Wrong summary, got: %s, exprected: %s\n", summaryB, expectedB)
 	}
 }
