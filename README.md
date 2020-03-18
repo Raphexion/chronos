@@ -7,8 +7,18 @@ Chronos - JIRA time tracker
 Downloading latest release
 --------------------------
 
-[Linux](https://github.com/Raphexion/chronos/releases/download/v0.1.0/chronos-v0.1.0)
-[Windows](https://github.com/Raphexion/chronos/releases/download/v0.1.0/chronos-v0.1.0.exe)
+[Linux](https://github.com/Raphexion/chronos/releases/latest/download/chronos)
+
+[Windows](https://github.com/Raphexion/chronos/releases/latest/download/chronos.exe)
+
+Install Linux
+-------------
+
+```sh
+mkdir -p ~/bin
+wget https://github.com/Raphexion/chronos/releases/latest/download/chronos -O ~/bin/chronos
+chmod +x ~/bin/chronos
+```
 
 Building from souce
 -------------------
