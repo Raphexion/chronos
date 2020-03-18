@@ -20,15 +20,18 @@ var (
 	DefaultUsername = "myUserName"
 	// DefaultWeeksLookback number of weeks to look back
 	DefaultWeeksLookback = 3
+	// DefaultHoursPerWeek is the normal work week
+	DefaultHoursPerWeek = 37.0
 )
 
 // Jira represent all configuration for Jira
 type Jira struct {
-	URL           string `yaml:"url"`
-	Mail          string `yaml:"mail"`
-	APIKey        string `yaml:"apikey"`
-	Username      string `yaml:"username"`
-	WeeksLookback int    `yaml:"weekslookback"`
+	URL           string  `yaml:"url"`
+	Mail          string  `yaml:"mail"`
+	APIKey        string  `yaml:"apikey"`
+	Username      string  `yaml:"username"`
+	WeeksLookback int     `yaml:"weekslookback"`
+	HoursPerWeek  float64 `yaml:"hoursperweek"`
 }
 
 // A ChronosConfig represents all the information we need to
@@ -86,6 +89,7 @@ func DefaultConfig() (config ChronosConfig) {
 			APIKey:        DefaultAPIKey,
 			Username:      DefaultUsername,
 			WeeksLookback: DefaultWeeksLookback,
+			HoursPerWeek:  DefaultHoursPerWeek,
 		},
 	}
 	return
