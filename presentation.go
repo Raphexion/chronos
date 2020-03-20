@@ -19,7 +19,10 @@ type newDate struct{ date string }
 type newIssue struct{ issue, summary string }
 type summaryDate struct{}
 type summaryWeek struct{}
-type noteHours struct{ hours float32 }
+type noteHours struct {
+	hours   float32
+	comment string
+}
 type printNewIssue struct{}
 type printSameIssue struct{}
 type issueSummary struct{ issue, summary string }
@@ -86,7 +89,7 @@ func BuildCommands(timeEntries []TimeEntry) (commands []Command) {
 			commands = append(commands, newDate{date: timeEntry.Date})
 			commands = append(commands, newIssue{issue: timeEntry.Issue, summary: timeEntry.Summary})
 
-			commands = append(commands, noteHours{hours: timeEntry.Hours})
+			commands = append(commands, noteHours{hours: timeEntry.Hours, comment: timeEntry.Comment})
 			commands = append(commands, printNewIssue{})
 
 			currentWeek = timeEntry.Week
@@ -102,7 +105,7 @@ func BuildCommands(timeEntries []TimeEntry) (commands []Command) {
 			commands = append(commands, newDate{date: timeEntry.Date})
 			commands = append(commands, newIssue{issue: timeEntry.Issue, summary: timeEntry.Summary})
 
-			commands = append(commands, noteHours{hours: timeEntry.Hours})
+			commands = append(commands, noteHours{hours: timeEntry.Hours, comment: timeEntry.Comment})
 			commands = append(commands, printNewIssue{})
 
 			currentDate = timeEntry.Date
@@ -113,12 +116,12 @@ func BuildCommands(timeEntries []TimeEntry) (commands []Command) {
 
 			commands = append(commands, newIssue{issue: timeEntry.Issue, summary: timeEntry.Summary})
 
-			commands = append(commands, noteHours{hours: timeEntry.Hours})
+			commands = append(commands, noteHours{hours: timeEntry.Hours, comment: timeEntry.Comment})
 			commands = append(commands, printNewIssue{})
 
 			currentIssue = timeEntry.Issue
 		} else {
-			commands = append(commands, noteHours{hours: timeEntry.Hours})
+			commands = append(commands, noteHours{hours: timeEntry.Hours, comment: timeEntry.Comment})
 			commands = append(commands, printSameIssue{})
 		}
 	}
@@ -164,6 +167,7 @@ func PrettyPrint(commands []Command) (out bytes.Buffer) {
 	var date string = ""
 	var issue string = ""
 	var issueText string = ""
+	var comment string = ""
 
 	for _, command := range commands {
 		switch cmd := command.(type) {
@@ -211,14 +215,23 @@ func PrettyPrint(commands []Command) (out bytes.Buffer) {
 			dateTotal += cmd.hours
 			issueTotal += cmd.hours
 			issueHours = cmd.hours
+			comment = cmd.comment
 
 		case printNewIssue:
 			if issue != "" {
-				out.WriteString(fmt.Sprintf("\t%s: %6.2f %s\n", issue, issueHours, issueText))
+				if comment != "" {
+					out.WriteString(fmt.Sprintf("\t%s: %6.2f %s // %s\n", issue, issueHours, issueText, comment))
+				} else {
+					out.WriteString(fmt.Sprintf("\t%s: %6.2f %s\n", issue, issueHours, issueText))
+				}
 			}
 
 		case printSameIssue:
-			out.WriteString(fmt.Sprintf("\t    \\--: %6.2f\n", issueHours))
+			if comment != "" {
+				out.WriteString(fmt.Sprintf("\t    \\--: %6.2f // %s\n", issueHours, comment))
+			} else {
+				out.WriteString(fmt.Sprintf("\t    \\--: %6.2f\n", issueHours))
+			}
 
 		case issueSummary:
 			// issue := cmd.issue

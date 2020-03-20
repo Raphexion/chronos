@@ -18,6 +18,7 @@ var (
 	issue          = flag.String("issue", "", "issue to query or manipulate")
 	hours          = flag.Int("hours", 0, "hours to log time")
 	minutes        = flag.Int("minutes", 0, "minutes to log time")
+	comment        = flag.String("comment", "", "worklog comment")
 )
 
 func main() {
@@ -53,7 +54,7 @@ func main() {
 
 	if *logWork {
 		if *issue != "" && (*hours > 0 || *minutes > 0) {
-			err := logWorkInJIRA(client, config, *issue, *hours, *minutes)
+			err := logWorkInJIRA(client, config, *issue, *hours, *minutes, *comment)
 			if err != nil {
 				log.Fatal(err)
 			} else {
