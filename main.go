@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/andygrunwald/go-jira"
@@ -12,7 +13,11 @@ var (
 	mail           = flag.String("mail", "", "your mail your are using when log-in")
 	username       = flag.String("username", "", "username, e.g, nijo")
 	apikey         = flag.String("api-key", "", "JIRA api key")
-	generateConfig = flag.Bool("generate-config", false, "Generate and example config in home folder")
+	generateConfig = flag.Bool("generate-config", false, "generate and example config in home folder")
+	logWork        = flag.Bool("logwork", false, "log time in JIRA")
+	issue          = flag.String("issue", "", "issue to query or manipulate")
+	hours          = flag.Int("hours", 0, "hours to log time")
+	minutes        = flag.Int("minutes", 0, "minutes to log time")
 )
 
 func main() {
@@ -43,6 +48,20 @@ func main() {
 	client, err := jira.NewClient(tp.Client(), config.Jira.URL)
 	if err != nil {
 		log.Fatal(err)
+		return
+	}
+
+	if *logWork {
+		if *issue != "" && (*hours > 0 || *minutes > 0) {
+			err := logWorkInJIRA(client, config, *issue, *hours, *minutes)
+			if err != nil {
+				log.Fatal(err)
+			} else {
+				fmt.Printf("Successfully logged %dh %dm to %s\n", *hours, *minutes, *issue)
+			}
+		} else {
+			log.Fatalf("Unable to log work, need --issue, --hours and/or --minutes")
+		}
 		return
 	}
 
