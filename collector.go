@@ -36,20 +36,24 @@ func issueAndWorklogToTimeEntry(issue jira.Issue, worklog jira.WorklogRecord) (e
 	return
 }
 
-func extractTimeEntriesFromIssues(issues []jira.Issue) (timeEntries []TimeEntry) {
-	for _, issue := range issues {
-		for _, worklog := range issue.Fields.Worklog.Worklogs {
-			timeEntries = append(timeEntries, issueAndWorklogToTimeEntry(issue, worklog))
-		}
-	}
-	log.Printf("Extracted %d time entries from %d issues", len(timeEntries), len(issues))
-	return
-}
-
 func filterTimeEntries(timeEntries []TimeEntry, predicate timeEntryPredicate) (ret []TimeEntry) {
 	for _, record := range timeEntries {
 		if predicate(record) {
 			ret = append(ret, record)
+		}
+	}
+	return
+}
+
+func extractAllWorklogsForIssues(client *jira.Client, issues []jira.Issue) (timeEntries []TimeEntry) {
+	for _, issue := range issues {
+		key := issue.Key
+		worklog, _, err := client.Issue.GetWorklogs(key)
+		if err != nil {
+			log.Fatalf("[collector] Unable to extract worklog for issue %s", err)
+		}
+		for _, worklogRecord := range worklog.Worklogs {
+			timeEntries = append(timeEntries, issueAndWorklogToTimeEntry(issue, worklogRecord))
 		}
 	}
 	return
@@ -75,7 +79,9 @@ func ExtractTimeEntriesFromJira(client *jira.Client, config ChronosConfig) ([]Ti
 
 	log.Printf("JIRA returned %d items", len(issues))
 
-	timeEntries := extractTimeEntriesFromIssues(issues)
+	// To get all worklogs (more than 20), we need to iterate
+	// over each issue and do a new request
+	timeEntries := extractAllWorklogsForIssues(client, issues)
 
 	employeeTimeEntries := filterTimeEntries(timeEntries, func(worklog TimeEntry) bool {
 		return worklog.Employee == config.Jira.Username || strings.HasPrefix(worklog.EmailAddress, config.Jira.Username)

@@ -79,3 +79,10 @@ Week  2
 
 	Total:     3.00
 ```
+
+Log work in JIRA
+----------------
+
+```sh
+./chronos --logtime --issue AA-1234 --minutes 20
+```
