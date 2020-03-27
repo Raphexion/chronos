@@ -19,7 +19,7 @@ var timeEntry1 = TimeEntry{
 	Summary:  summaryA,
 	Employee: "maxx",
 	Hours:    1.0,
-	Comment:  "My Comment",
+	Comment:  "My Comment 111",
 }
 
 var timeEntry2 = TimeEntry{
@@ -29,7 +29,7 @@ var timeEntry2 = TimeEntry{
 	Summary:  summaryB,
 	Employee: "maxx",
 	Hours:    2.0,
-	Comment:  "My Comment",
+	Comment:  "My Comment 222",
 }
 
 var timeEntry3 = TimeEntry{
@@ -39,7 +39,7 @@ var timeEntry3 = TimeEntry{
 	Summary:  summaryB,
 	Employee: "maxx",
 	Hours:    3.0,
-	Comment:  "My Comment",
+	Comment:  "My Comment 333",
 }
 
 var timeEntry4 = TimeEntry{
@@ -49,7 +49,7 @@ var timeEntry4 = TimeEntry{
 	Summary:  summaryB,
 	Employee: "maxx",
 	Hours:    4.0,
-	Comment:  "My Comment",
+	Comment:  "My Comment 444",
 }
 
 func TestCommandBuilderEmpty(t *testing.T) {

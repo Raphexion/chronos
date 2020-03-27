@@ -158,6 +158,7 @@ func BuildCommands(timeEntries []TimeEntry) (commands []Command) {
 // the code more testable using a bytes.Buffer that
 // we can easily inspect
 func PrettyPrint(commands []Command) (out bytes.Buffer) {
+	showComments := false
 	var weekTotal float32 = 0.0
 	var dateTotal float32 = 0.0
 	var issueTotal float32 = 0.0
@@ -219,7 +220,7 @@ func PrettyPrint(commands []Command) (out bytes.Buffer) {
 
 		case printNewIssue:
 			if issue != "" {
-				if comment != "" {
+				if comment != "" && showComments {
 					out.WriteString(fmt.Sprintf("\t%s: %6.2f %s // %s\n", issue, issueHours, issueText, comment))
 				} else {
 					out.WriteString(fmt.Sprintf("\t%s: %6.2f %s\n", issue, issueHours, issueText))
@@ -227,7 +228,7 @@ func PrettyPrint(commands []Command) (out bytes.Buffer) {
 			}
 
 		case printSameIssue:
-			if comment != "" {
+			if comment != "" && showComments {
 				out.WriteString(fmt.Sprintf("\t    \\--: %6.2f // %s\n", issueHours, comment))
 			} else {
 				out.WriteString(fmt.Sprintf("\t    \\--: %6.2f\n", issueHours))
