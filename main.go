@@ -19,6 +19,7 @@ var (
 	hours          = flag.Int("hours", 0, "hours to log time")
 	minutes        = flag.Int("minutes", 0, "minutes to log time")
 	comment        = flag.String("comment", "", "worklog comment")
+	brief          = flag.Bool("brief", false, "print log with fewer details")
 )
 
 func main() {
@@ -72,5 +73,9 @@ func main() {
 		return
 	}
 
-	Print(timeEntries)
+	if *brief {
+		PrintBrief(timeEntries)
+	} else {
+		Print(timeEntries)
+	}
 }

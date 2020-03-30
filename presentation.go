@@ -25,20 +25,20 @@ type noteHours struct {
 }
 type printNewIssue struct{}
 type printSameIssue struct{}
-type issueSummary struct{ issue, summary string }
+type printIssueSummary struct{ issue, summary string }
 
-func (clearWeek) isCommand()      {}
-func (clearDate) isCommand()      {}
-func (clearIssue) isCommand()     {}
-func (newWeek) isCommand()        {}
-func (newDate) isCommand()        {}
-func (newIssue) isCommand()       {}
-func (summaryWeek) isCommand()    {}
-func (summaryDate) isCommand()    {}
-func (noteHours) isCommand()      {}
-func (printNewIssue) isCommand()  {}
-func (printSameIssue) isCommand() {}
-func (issueSummary) isCommand()   {}
+func (clearWeek) isCommand()         {}
+func (clearDate) isCommand()         {}
+func (clearIssue) isCommand()        {}
+func (newWeek) isCommand()           {}
+func (newDate) isCommand()           {}
+func (newIssue) isCommand()          {}
+func (summaryWeek) isCommand()       {}
+func (summaryDate) isCommand()       {}
+func (noteHours) isCommand()         {}
+func (printNewIssue) isCommand()     {}
+func (printSameIssue) isCommand()    {}
+func (printIssueSummary) isCommand() {}
 
 // ExtractIssueSummaries will take many timeEntries and extract their summaries
 func ExtractIssueSummaries(timeEntries []TimeEntry) (issues []string, summaries map[string]string) {
@@ -146,7 +146,7 @@ func BuildCommands(timeEntries []TimeEntry) (commands []Command) {
 
 		for _, issue := range issues {
 			summary := summaries[issue]
-			commands = append(commands, issueSummary{issue: issue, summary: summary})
+			commands = append(commands, printIssueSummary{issue: issue, summary: summary})
 		}
 	}
 
@@ -234,10 +234,49 @@ func PrettyPrint(commands []Command) (out bytes.Buffer) {
 				out.WriteString(fmt.Sprintf("\t    \\--: %6.2f\n", issueHours))
 			}
 
-		case issueSummary:
+		case printIssueSummary:
 			// issue := cmd.issue
 			// summary := cmd.summary
 			// TODO: out.WriteString(fmt.Sprintf("%s: %s\n", issue, summary))
+		}
+	}
+	return
+}
+
+// PrettyPrintBrief converts commands to bytes buffer.
+// Instead of printing directly to stdout we make
+// the code more testable using a bytes.Buffer that
+// we can easily inspect
+func PrettyPrintBrief(commands []Command) (out bytes.Buffer) {
+	var weekTotal float32 = 0.0
+	var dateTotal float32 = 0.0
+	var issueTotal float32 = 0.0
+
+	var week int = 0
+
+	for _, command := range commands {
+		switch cmd := command.(type) {
+
+		case clearWeek:
+			weekTotal = 0.0
+		case clearDate:
+			dateTotal = 0.0
+		case clearIssue:
+			issueTotal = 0.0
+
+		case newWeek:
+			week = cmd.week
+
+		case summaryWeek:
+			if week > 0 {
+				out.WriteString(fmt.Sprintf("Week [%2d]: %6.2f\n", week, weekTotal))
+			}
+
+		// note down the time for an issue
+		case noteHours:
+			weekTotal += cmd.hours
+			dateTotal += cmd.hours
+			issueTotal += cmd.hours
 		}
 	}
 	return
@@ -247,5 +286,12 @@ func PrettyPrint(commands []Command) (out bytes.Buffer) {
 func Print(timeEntries []TimeEntry) {
 	commands := BuildCommands(timeEntries)
 	output := PrettyPrint(commands)
+	fmt.Printf(output.String())
+}
+
+// PrintBrief prints a brief worklog
+func PrintBrief(timeEntries []TimeEntry) {
+	commands := BuildCommands(timeEntries)
+	output := PrettyPrintBrief(commands)
 	fmt.Printf(output.String())
 }
