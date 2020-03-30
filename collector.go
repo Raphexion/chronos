@@ -88,7 +88,7 @@ func ExtractTimeEntriesFromJira(client *jira.Client, config ChronosConfig) ([]Ti
 	})
 
 	recentTimeEntries := filterTimeEntries(employeeTimeEntries, func(worklog TimeEntry) bool {
-		return worklog.Date > pastDate
+		return worklog.Date >= pastDate
 	})
 
 	return recentTimeEntries, nil
