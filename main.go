@@ -20,6 +20,7 @@ var (
 	minutes        = flag.Int("minutes", 0, "minutes to log time")
 	comment        = flag.String("comment", "", "worklog comment")
 	brief          = flag.Bool("brief", false, "print log with fewer details")
+	sprint         = flag.Bool("sprint", false, "show your issues in the active sprint(s)")
 )
 
 func main() {
@@ -67,6 +68,20 @@ func main() {
 		return
 	}
 
+	if *sprint {
+		sprintIssues, err := UsersIssuesInOpenSprints(client, config)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		for _, issue := range sprintIssues {
+			fmt.Printf("%s: %s [%s]\n", issue.issue, issue.summary, issue.assignee)
+		}
+
+		return
+	}
+
 	timeEntries, nil := ExtractTimeEntriesFromJira(client, config)
 	if err != nil {
 		log.Fatal(err)
@@ -78,4 +93,5 @@ func main() {
 	} else {
 		Print(timeEntries)
 	}
+
 }
