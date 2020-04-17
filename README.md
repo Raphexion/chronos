@@ -84,5 +84,5 @@ Log work in JIRA
 ----------------
 
 ```sh
-./chronos --logtime --issue AA-1234 --minutes 20
+./chronos --logwork --issue AA-1234 --minutes 20
 ```
