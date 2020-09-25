@@ -92,3 +92,10 @@ Log work in JIRA
 ```sh
 ./chronos --logwork --issue AA-1234 --minutes 20
 ```
+
+See the current sprint
+----------------
+
+```sh
+./chronos --sprint
+```
