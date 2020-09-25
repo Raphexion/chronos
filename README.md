@@ -49,6 +49,12 @@ jira:
   username: myUserName
 ```
 
+Create a api key in JIRA:
+
+https://id.atlassian.com/manage-profile/security/api-tokens
+
+Update the .yaml file with the correct key.
+
 After you have corrected the configuration, simply type
 
 ```sh
